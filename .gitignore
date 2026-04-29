@@ -1,36 +1,58 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Gradle
+.gradle/
+build/
+*/build/
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
+# Local configuration file (SDK path, etc.)
+local.properties
 
-# testing
-/coverage
+# Log files
+*.log
 
-# next.js
-/.next/
-/out/
+# Android Studio / IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
 
-# production
-/build
+# VS Code (if you use it)
+.vscode/
 
-# misc
+# Mac / Linux system files
 .DS_Store
-*.pem
+Thumbs.db
 
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# Keystore files (IMPORTANT — never commit these)
+*.jks
+*.keystore
 
-# local env files
-.env*.local
+# Generated files
+captures/
+.externalNativeBuild/
+.cxx/
+
+# NDK
+obj/
+
+# APK / AAB outputs
+*.apk
+*.aab
+
+# Proguard / R8 mapping files
+mapping.txt
+
+# Firebase / Google Services (keep config, ignore generated)
+google-services.json.backup
+
+# Kotlin
+*.kotlin_module
+
+# Gradle wrapper (keep jar, ignore others if needed)
+!gradle/wrapper/gradle-wrapper.jar
+
+# Environment / secrets
 .env
+.env.*
 
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# Signing configs (if you externalize them)
+keystore.properties
