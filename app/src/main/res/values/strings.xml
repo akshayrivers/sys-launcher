@@ -1,53 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Senior Launcher</string>
-    <string name="voice_button">Voice Command</string>
-    <string name="recognized_default">Say: son, daughter, home, or help</string>
+    
+    <!-- Main Screen -->
+    <string name="quick_contacts">My Family</string>
+    <string name="quick_contacts_hint">Tap photo to call. Press and hold to change.</string>
+    <string name="voice_button">🎤 Voice Command</string>
+    <string name="recognized_default">Say: call son, gallery, youtube, whatsapp, help...</string>
+    
+    <!-- Quick Contacts -->
     <string name="contact_1">Son</string>
     <string name="contact_2">Daughter</string>
     <string name="contact_3">Home</string>
     <string name="contact_4">Help</string>
-    <string name="setup_title">Caretaker Provisioning (One Time)</string>
+    
+    <!-- Section Buttons -->
+    <string name="section_contacts">📞 Contacts</string>
+    <string name="section_gallery">🖼️ Photos</string>
+    <string name="section_youtube">▶️ Videos</string>
+    <string name="section_whatsapp">💬 WhatsApp</string>
+    <string name="section_flashlight">🔦 Torch</string>
+    <string name="section_speak_time">🕐 Time</string>
+    <string name="volume_down">🔉 Quieter</string>
+    <string name="volume_up">🔊 Louder</string>
+    <string name="section_ai">🤖 Ask Me</string>
+    <string name="section_config">⚙️ Setup</string>
+    
+    <!-- Setup Screen -->
+    <string name="setup_title">First Time Setup</string>
+    <string name="setup_subtitle">Please fill in family details</string>
     <string name="caretaker_email">Caretaker Email</string>
-    <string name="helpers_csv">Authorized Helpers (comma-separated phone/email)</string>
-    <string name="son_number">Son Number</string>
-    <string name="daughter_number">Daughter Number</string>
-    <string name="home_number">Home Number</string>
-    <string name="help_number">Help Number</string>
-    <string name="caretaker_pin">Caretaker PIN</string>
+    <string name="helpers_csv">Helper Phone Numbers (separated by commas)</string>
+    <string name="son_number">Son's Phone Number</string>
+    <string name="daughter_number">Daughter's Phone Number</string>
+    <string name="home_number">Home Phone Number</string>
+    <string name="help_number">Emergency Help Number</string>
+    <string name="caretaker_pin">Caretaker PIN (4+ digits)</string>
     <string name="language_label">Language</string>
-    <string name="plugin_label">Plugin</string>
-    <string name="complete_setup">Complete Setup</string>
-    <string name="action_go_home">Navigate Home</string>
-    <string name="action_call_son">Initiate Call Son</string>
-    <string name="action_call_help">Initiate Call Help</string>
-    <string name="action_reset_ui">Reset UI State</string>
-    <string name="end_session">End Session</string>
-    <string name="quick_contacts">Quick Contacts</string>
-    <string name="quick_contacts_hint">Tap to call. Long press photo to change.</string>
-    <string name="section_contacts">Contacts</string>
-    <string name="section_gallery">Gallery</string>
-    <string name="section_youtube">YouTube</string>
-    <string name="section_whatsapp">WhatsApp</string>
-    <string name="section_flashlight">Torch</string>
-    <string name="section_speak_time">Speak Time</string>
-    <string name="volume_down">Volume -</string>
-    <string name="volume_up">Volume +</string>
-    <string name="add_contact">Add Contact</string>
+    <string name="plugin_label">Voice Type</string>
+    <string name="complete_setup">✓ Complete Setup</string>
+    
+    <!-- Actions -->
+    <string name="action_go_home">← Back to Home</string>
+    <string name="action_call_son">📞 Call Son</string>
+    <string name="action_call_help">🆘 Get Help</string>
+    <string name="action_reset_ui">🔄 Refresh Screen</string>
+    <string name="end_session">✓ Done</string>
+    
+    <!-- Contacts -->
+    <string name="add_contact">➕ Add Contact</string>
     <string name="contact_name">Name</string>
     <string name="contact_phone">Phone Number</string>
-    <string name="contact_role">Role (SON/DAUGHTER/HOME/HELP)</string>
-    <string name="pick_photo">Pick Photo</string>
-    <string name="take_photo">Take Photo</string>
-    <string name="import_from_phone">Import From Phone Contacts</string>
-    <string name="import_all_contacts">Import All Contacts</string>
-    <string name="section_ai">AI Assist</string>
-    <string name="section_config">Config</string>
-    <string name="local_ai_title">Local AI Assistant</string>
-    <string name="local_ai_hint">Ask in simple words</string>
-    <string name="local_ai_run">Run</string>
-    <string name="caretaker_config_title">Caretaker Config</string>
-    <string name="save_config">Save Config</string>
-    <string name="install_local_ai">Install Local AI Model</string>
-    <string name="local_ai_installed">Local AI model installed</string>
-    <string name="local_ai_missing">Install local AI model from Config first</string>
+    <string name="contact_role">Type (SON/DAUGHTER/HOME/HELP)</string>
+    <string name="pick_photo">📷 Choose Photo</string>
+    <string name="take_photo">📸 Take Photo</string>
+    <string name="import_from_phone">📥 Import Contact</string>
+    <string name="import_all_contacts">📥 Import All Contacts</string>
+    
+    <!-- AI Assistant -->
+    <string name="local_ai_title">🤖 Ask the Assistant</string>
+    <string name="local_ai_hint">Say what you want simply</string>
+    <string name="local_ai_run">🎤 Listen</string>
+    <string name="local_ai_installed">Voice assistant ready</string>
+    <string name="local_ai_missing">Voice assistant not installed yet</string>
+    <string name="install_local_ai">Install Voice Assistant</string>
+    
+    <!-- Caretaker Config -->
+    <string name="caretaker_config_title">Setup Configuration</string>
+    <string name="save_config">💾 Save Changes</string>
+    
+    <!-- Remote Assist -->
+    <string name="remote_assist_title">Live Help Session</string>
+    <string name="session_active">Caretaker connected</string>
+    <string name="session_timeout">Session will end in</string>
+    
+    <!-- Messages -->
+    <string name="no_number_configured">No phone number set</string>
+    <string name="phone_permission_denied">Cannot make calls - permission needed</string>
+    <string name="microphone_permission_denied">Cannot listen - microphone permission needed</string>
+    <string name="camera_permission_denied">Cannot take photos - camera permission needed</string>
+    <string name="contacts_permission_denied">Cannot access contacts - permission needed</string>
+    <string name="unable_to_call">Unable to make call</string>
+    <string name="unable_to_open_app">Application not found</string>
+    <string name="voice_recognition_unavailable">Voice recognition not available</string>
+    <string name="low_confidence_voice">Sorry, I didn't understand. Please speak again or use buttons.</string>
+    <string name="fill_all_fields">Please fill all fields</string>
+    <string name="pin_too_short">PIN must be at least 4 digits</string>
+    <string name="invalid_pin">Invalid PIN</string>
+    <string name="import_success">Contact imported</string>
+    <string name="import_failed">Could not import contact</string>
+    <string name="no_contacts">No contacts available</string>
 </resources>
