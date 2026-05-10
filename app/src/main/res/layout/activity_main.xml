@@ -61,7 +61,7 @@
                     android:background="@drawable/circle_button_son"
                     android:contentDescription="@string/contact_1"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_family_son"
+                    android:src="@drawable/contact_1_placeholder"
                     android:padding="12dp" />
 
                 <TextView
@@ -93,7 +93,7 @@
                     android:background="@drawable/circle_button_daughter"
                     android:contentDescription="@string/contact_2"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_family_daughter"
+                    android:src="@drawable/contact_2_placeholder"
                     android:padding="12dp" />
 
                 <TextView
@@ -134,7 +134,7 @@
                     android:background="@drawable/circle_button_home"
                     android:contentDescription="@string/contact_3"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_family_home"
+                    android:src="@drawable/contact_3_placeholder"
                     android:padding="12dp" />
 
                 <TextView
@@ -166,7 +166,7 @@
                     android:background="@drawable/circle_button_help"
                     android:contentDescription="@string/contact_4"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_family_help"
+                    android:src="@drawable/contact_4_placeholder"
                     android:padding="12dp" />
 
                 <TextView

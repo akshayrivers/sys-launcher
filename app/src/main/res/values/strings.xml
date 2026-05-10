@@ -31,8 +31,8 @@
     <string name="setup_subtitle">Please fill in family details</string>
     <string name="caretaker_email">Caretaker Email</string>
     <string name="helpers_csv">Helper Phone Numbers (separated by commas)</string>
-    <string name="son_number">Son's Phone Number</string>
-    <string name="daughter_number">Daughter's Phone Number</string>
+    <string name="son_number">Son\'s Phone Number</string>
+    <string name="daughter_number">Daughter\'s Phone Number</string>
     <string name="home_number">Home Phone Number</string>
     <string name="help_number">Emergency Help Number</string>
     <string name="caretaker_pin">Caretaker PIN (4+ digits)</string>
@@ -83,7 +83,7 @@
     <string name="unable_to_call">Unable to make call</string>
     <string name="unable_to_open_app">Application not found</string>
     <string name="voice_recognition_unavailable">Voice recognition not available</string>
-    <string name="low_confidence_voice">Sorry, I didn't understand. Please speak again or use buttons.</string>
+    <string name="low_confidence_voice">Sorry, I didn\'t understand. Please speak again or use buttons.</string>
     <string name="fill_all_fields">Please fill all fields</string>
     <string name="pin_too_short">PIN must be at least 4 digits</string>
     <string name="invalid_pin">Invalid PIN</string>
