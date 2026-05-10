@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Button dimensions optimized for senior citizens (minimum 48dp touch target) -->
+    <dimen name="button_min_height">56dp</dimen>
+    <dimen name="button_min_width">80dp</dimen>
+    <dimen name="button_padding">16dp</dimen>
+    <dimen name="button_text_size">18sp</dimen>
+    
+    <!-- Text dimensions for better readability -->
+    <dimen name="text_heading_size">24sp</dimen>
+    <dimen name="text_body_size">18sp</dimen>
+    <dimen name="text_small_size">16sp</dimen>
+    <dimen name="text_label_size">16sp</dimen>
+    
+    <!-- Spacing -->
+    <dimen name="margin_large">24dp</dimen>
+    <dimen name="margin_medium">16dp</dimen>
+    <dimen name="margin_small">8dp</dimen>
+    <dimen name="margin_tiny">4dp</dimen>
+    
+    <!-- Corner radius for modern look -->
+    <dimen name="corner_radius_button">12dp</dimen>
+    <dimen name="corner_radius_card">16dp</dimen>
+    
+    <!-- Image sizes -->
+    <dimen name="contact_image_size">120dp</dimen>
+    <dimen name="contact_icon_size">64dp</dimen>
+</resources>

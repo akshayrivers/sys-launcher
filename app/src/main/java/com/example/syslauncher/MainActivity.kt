@@ -31,6 +31,9 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import android.provider.MediaStore
+import com.example.syslauncher.utils.AccessibilityHelper
+import com.example.syslauncher.utils.LoggingHelper
+import com.example.syslauncher.utils.PermissionHelper
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -39,6 +42,8 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private lateinit var prefs: AppPrefs
     private lateinit var contactStore: ContactStore
+    private lateinit var permissionHelper: PermissionHelper
+    private lateinit var accessibilityHelper: AccessibilityHelper
 
     private var pendingNumber: String? = null
 
@@ -91,16 +96,10 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private val permissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { grants ->
             val hasCall = grants[Manifest.permission.CALL_PHONE] == true ||
-                ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.CALL_PHONE
-                ) == PackageManager.PERMISSION_GRANTED
+                permissionHelper.hasCallPermission()
 
             val hasAudio = grants[Manifest.permission.RECORD_AUDIO] == true ||
-                ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.RECORD_AUDIO
-                ) == PackageManager.PERMISSION_GRANTED
+                permissionHelper.hasAudioPermission()
 
             val number = pendingNumber
             if (hasCall && number != null) {
@@ -117,6 +116,11 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         super.onCreate(savedInstanceState)
         prefs = AppPrefs(this)
         contactStore = ContactStore(this)
+        permissionHelper = PermissionHelper(this)
+        accessibilityHelper = AccessibilityHelper(this)
+        
+        LoggingHelper.info("MainActivity created")
+        
         if (!prefs.isProvisioned()) {
             startActivity(Intent(this, ProvisioningActivity::class.java))
             finish()
@@ -158,7 +162,8 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun setupCrashRecovery() {
-        Thread.setDefaultUncaughtExceptionHandler { _, _ ->
+        Thread.setDefaultUncaughtExceptionHandler { _, exception ->
+            LoggingHelper.error("Uncaught exception", exception)
             val restartIntent = Intent(applicationContext, MainActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             }
@@ -198,6 +203,12 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
         pluginInfoText.text = "Lang: ${prefs.language()} | Plugin: ${prefs.plugin()}"
 
+        // Setup accessibility
+        accessibilityHelper.setupAccessibleImageButton(btnCall1, "Son")
+        accessibilityHelper.setupAccessibleImageButton(btnCall2, "Daughter")
+        accessibilityHelper.setupAccessibleImageButton(btnCall3, "Home")
+        accessibilityHelper.setupAccessibleImageButton(btnCall4, "Help")
+
         btnCall1.setOnClickListener { callSlot(1, "SON", prefs.sonNumber()) }
         btnCall2.setOnClickListener { callSlot(2, "DAUGHTER", prefs.daughterNumber()) }
         btnCall3.setOnClickListener { callSlot(3, "HOME", prefs.homeNumber()) }
@@ -220,7 +231,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun launchVoiceInput() {
-        if (!hasAudioPermission()) {
+        if (!permissionHelper.hasAudioPermission()) {
             permissionLauncher.launch(
                 arrayOf(
                     Manifest.permission.RECORD_AUDIO
@@ -266,26 +277,12 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
-    private fun hasCallPermission(): Boolean {
-        return ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.CALL_PHONE
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun hasAudioPermission(): Boolean {
-        return ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.RECORD_AUDIO
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-
     private fun callWithPermission(number: String) {
         if (number.isBlank()) {
             Toast.makeText(this, "No number configured", Toast.LENGTH_SHORT).show()
             return
         }
-        if (hasCallPermission()) {
+        if (permissionHelper.hasCallPermission()) {
             startCall(number)
             return
         }
@@ -310,6 +307,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
         try {
             startActivity(intent)
+            LoggingHelper.info("Call initiated to $number")
         } catch (_: SecurityException) {
             Toast.makeText(this, "Phone permission denied", Toast.LENGTH_SHORT).show()
         } catch (_: Exception) {

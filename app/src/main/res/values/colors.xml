@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Colors - High Contrast for Elderly Users -->
+    <color name="primary_blue">#2196F3</color>
+    <color name="primary_blue_dark">#1976D2</color>
+    <color name="primary_blue_light">#42A5F5</color>
+    
+    <!-- Accent Colors -->
+    <color name="accent_green">#4CAF50</color>
+    <color name="accent_orange">#FF9800</color>
+    <color name="accent_red">#F44336</color>
+    
+    <!-- Background Colors -->
+    <color name="bg_dark">#101010</color>
+    <color name="bg_surface_dark">#1E1E1E</color>
+    <color name="bg_light">#FFFFFF</color>
+    <color name="bg_surface_light">#F5F5F5</color>
+    
+    <!-- Text Colors -->
+    <color name="text_primary_dark">#FFFFFF</color>
+    <color name="text_secondary_dark">#BBBBBB</color>
+    <color name="text_primary_light">#000000</color>
+    <color name="text_secondary_light">#666666</color>
+    
+    <!-- Status Colors -->
+    <color name="success_green">#4CAF50</color>
+    <color name="error_red">#F44336</color>
+    <color name="warning_orange">#FF9800</color>
+    <color name="info_blue">#2196F3</color>
+    
+    <!-- Special Colors -->
+    <color name="transparent_white">#80FFFFFF</color>
+    <color name="border_color_dark">#404040</color>
+    <color name="border_color_light">#EEEEEE</color>
+    
+    <!-- Quick Contact Colors -->
+    <color name="contact_1_color">#FF6B6B</color>
+    <color name="contact_2_color">#4ECDC4</color>
+    <color name="contact_3_color">#45B7D1</color>
+    <color name="contact_4_color">#FFA502</color>
+</resources>

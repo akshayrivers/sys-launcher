@@ -1,295 +1,325 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/rootLayout"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#101010"
-    android:padding="16dp">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/quick_contacts"
-        android:textColor="#FFFFFF"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:text="@string/quick_contacts_hint"
-        android:textColor="#BBBBBB"
-        android:textSize="13sp" />
-
-    <GridLayout
-        android:id="@+id/contactGrid"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.52"
-        android:columnCount="2"
-        android:rowCount="2"
-        android:alignmentMode="alignMargins"
-        android:useDefaultMargins="true">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
-            android:orientation="vertical">
-
-            <ImageButton
-                android:id="@+id/btnCall1"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:adjustViewBounds="true"
-                android:background="@drawable/contact_button_bg"
-                android:contentDescription="@string/contact_1"
-                android:padding="12dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/contact_1_placeholder" />
-
-            <TextView
-                android:id="@+id/lblCall1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/contact_1"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
-            android:orientation="vertical">
-
-            <ImageButton
-                android:id="@+id/btnCall2"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:adjustViewBounds="true"
-                android:background="@drawable/contact_button_bg"
-                android:contentDescription="@string/contact_2"
-                android:padding="12dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/contact_2_placeholder" />
-
-            <TextView
-                android:id="@+id/lblCall2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/contact_2"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
-            android:orientation="vertical">
-
-            <ImageButton
-                android:id="@+id/btnCall3"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:adjustViewBounds="true"
-                android:background="@drawable/contact_button_bg"
-                android:contentDescription="@string/contact_3"
-                android:padding="12dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/contact_3_placeholder" />
-
-            <TextView
-                android:id="@+id/lblCall3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/contact_3"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
-            android:orientation="vertical">
-
-            <ImageButton
-                android:id="@+id/btnCall4"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:adjustViewBounds="true"
-                android:background="@drawable/contact_button_bg"
-                android:contentDescription="@string/contact_4"
-                android:padding="12dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/contact_4_placeholder" />
-
-            <TextView
-                android:id="@+id/lblCall4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/contact_4"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-    </GridLayout>
-
-    <Button
-        android:id="@+id/btnVoice"
-        android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:layout_marginTop="12dp"
-        android:text="@string/voice_button" />
+    android:background="@color/bg_dark"
+    android:fillViewport="true">
 
     <LinearLayout
+        android:id="@+id/rootLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:padding="@dimen/margin_medium">
 
-        <Button
-            android:id="@+id/btnContactsSection"
-            android:layout_width="0dp"
-            android:layout_height="64dp"
-            android:layout_weight="1"
-            android:drawableTop="@android:drawable/ic_menu_myplaces"
-            android:text="@string/section_contacts" />
+        <!-- Header Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/quick_contacts"
+            android:textColor="@color/text_primary_dark"
+            android:textSize="@dimen/text_heading_size"
+            android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/btnGallerySection"
-            android:layout_width="0dp"
-            android:layout_height="64dp"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
-            android:drawableTop="@android:drawable/ic_menu_gallery"
-            android:text="@string/section_gallery" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_tiny"
+            android:text="@string/quick_contacts_hint"
+            android:textColor="@color/text_secondary_dark"
+            android:textSize="@dimen/text_small_size" />
 
+        <!-- Quick Contacts Grid -->
+        <GridLayout
+            android:id="@+id/contactGrid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:columnCount="2"
+            android:rowCount="2"
+            android:alignmentMode="alignMargins"
+            android:useDefaultMargins="true">
+
+            <!-- Contact 1 -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:orientation="vertical"
+                android:padding="@dimen/margin_small">
+
+                <ImageButton
+                    android:id="@+id/btnCall1"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/contact_image_size"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/contact_button_bg"
+                    android:contentDescription="@string/contact_1"
+                    android:padding="@dimen/button_padding"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/contact_1_placeholder" />
+
+                <TextView
+                    android:id="@+id/lblCall1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_small"
+                    android:gravity="center"
+                    android:text="@string/contact_1"
+                    android:textColor="@color/text_primary_dark"
+                    android:textSize="@dimen/text_label_size"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Contact 2 -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:orientation="vertical"
+                android:padding="@dimen/margin_small">
+
+                <ImageButton
+                    android:id="@+id/btnCall2"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/contact_image_size"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/contact_button_bg"
+                    android:contentDescription="@string/contact_2"
+                    android:padding="@dimen/button_padding"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/contact_2_placeholder" />
+
+                <TextView
+                    android:id="@+id/lblCall2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_small"
+                    android:gravity="center"
+                    android:text="@string/contact_2"
+                    android:textColor="@color/text_primary_dark"
+                    android:textSize="@dimen/text_label_size"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Contact 3 -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:orientation="vertical"
+                android:padding="@dimen/margin_small">
+
+                <ImageButton
+                    android:id="@+id/btnCall3"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/contact_image_size"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/contact_button_bg"
+                    android:contentDescription="@string/contact_3"
+                    android:padding="@dimen/button_padding"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/contact_3_placeholder" />
+
+                <TextView
+                    android:id="@+id/lblCall3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_small"
+                    android:gravity="center"
+                    android:text="@string/contact_3"
+                    android:textColor="@color/text_primary_dark"
+                    android:textSize="@dimen/text_label_size"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Contact 4 -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:orientation="vertical"
+                android:padding="@dimen/margin_small">
+
+                <ImageButton
+                    android:id="@+id/btnCall4"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/contact_image_size"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/contact_button_bg"
+                    android:contentDescription="@string/contact_4"
+                    android:padding="@dimen/button_padding"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/contact_4_placeholder" />
+
+                <TextView
+                    android:id="@+id/lblCall4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_small"
+                    android:gravity="center"
+                    android:text="@string/contact_4"
+                    android:textColor="@color/text_primary_dark"
+                    android:textSize="@dimen/text_label_size"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </GridLayout>
+
+        <!-- Voice Command Button -->
         <Button
-            android:id="@+id/btnYoutubeSection"
-            android:layout_width="0dp"
-            android:layout_height="64dp"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
-            android:drawableTop="@android:drawable/ic_media_play"
-            android:text="@string/section_youtube" />
+            android:id="@+id/btnVoice"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_min_height"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:text="@string/voice_button"
+            style="@style/SeniorButton" />
+
+        <!-- Section Buttons Row 1 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnContactsSection"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/button_min_height"
+                android:layout_weight="1"
+                android:drawableTop="@android:drawable/ic_menu_myplaces"
+                android:text="@string/section_contacts"
+                style="@style/SeniorButton" />
+
+            <Button
+                android:id="@+id/btnGallerySection"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/button_min_height"
+                android:layout_marginStart="@dimen/margin_small"
+                android:layout_weight="1"
+                android:drawableTop="@android:drawable/ic_menu_gallery"
+                android:text="@string/section_gallery"
+                style="@style/SeniorButton" />
+
+            <Button
+                android:id="@+id/btnYoutubeSection"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/button_min_height"
+                android:layout_marginStart="@dimen/margin_small"
+                android:layout_weight="1"
+                android:drawableTop="@android:drawable/ic_media_play"
+                android:text="@string/section_youtube"
+                style="@style/SeniorButton" />
+        </LinearLayout>
+
+        <!-- Section Buttons Row 2 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_small"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnWhatsapp"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/button_min_height"
+                android:layout_weight="1"
+                android:drawableTop="@android:drawable/ic_dialog_email"
+                android:text="@string/section_whatsapp"
+                style="@style/SeniorButton" />
+
+            <Button
+                android:id="@+id/btnFlashlight"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/button_min_height"
+                android:layout_marginStart="@dimen/margin_small"
+                android:layout_weight="1"
+                android:drawableTop="@android:drawable/ic_lock_idle_charging"
+                android:text="@string/section_flashlight"
+                style="@style/SeniorButton" />
+
+            <Button
+                android:id="@+id/btnSpeakTime"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/button_min_height"
+                android:layout_marginStart="@dimen/margin_small"
+                android:layout_weight="1"
+                android:drawableTop="@android:drawable/ic_lock_idle_alarm"
+                android:text="@string/section_speak_time"
+                style="@style/SeniorButton" />
+        </LinearLayout>
+
+        <!-- Volume and AI Buttons Row 3 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_small"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnVolumeDown"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/button_min_height"
+                android:layout_weight="1"
+                android:text="@string/volume_down"
+                style="@style/SeniorButton" />
+
+            <Button
+                android:id="@+id/btnVolumeUp"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/button_min_height"
+                android:layout_marginStart="@dimen/margin_small"
+                android:layout_weight="1"
+                android:text="@string/volume_up"
+                style="@style/SeniorButton" />
+        </LinearLayout>
+
+        <!-- AI and Config Buttons Row 4 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_marginBottom="@dimen/margin_medium"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnAiAssistant"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/button_min_height"
+                android:layout_weight="1"
+                android:drawableTop="@android:drawable/ic_btn_speak_now"
+                android:text="@string/section_ai"
+                style="@style/SeniorButton" />
+
+            <Button
+                android:id="@+id/btnCaretakerConfig"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/button_min_height"
+                android:layout_marginStart="@dimen/margin_small"
+                android:layout_weight="1"
+                android:drawableTop="@android:drawable/ic_menu_manage"
+                android:text="@string/section_config"
+                style="@style/SeniorButton" />
+        </LinearLayout>
+
+        <!-- Status Text Section -->
+        <TextView
+            android:id="@+id/txtRecognized"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:gravity="center"
+            android:text="@string/recognized_default"
+            android:textColor="@color/text_primary_dark"
+            android:textSize="@dimen/text_body_size" />
+
+        <TextView
+            android:id="@+id/txtPluginInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_small"
+            android:gravity="center"
+            android:textColor="@color/text_secondary_dark"
+            android:textSize="@dimen/text_small_size" />
+
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btnWhatsapp"
-            android:layout_width="0dp"
-            android:layout_height="58dp"
-            android:layout_weight="1"
-            android:drawableTop="@android:drawable/ic_dialog_email"
-            android:text="@string/section_whatsapp" />
-
-        <Button
-            android:id="@+id/btnFlashlight"
-            android:layout_width="0dp"
-            android:layout_height="58dp"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
-            android:drawableTop="@android:drawable/ic_lock_idle_charging"
-            android:text="@string/section_flashlight" />
-
-        <Button
-            android:id="@+id/btnSpeakTime"
-            android:layout_width="0dp"
-            android:layout_height="58dp"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
-            android:drawableTop="@android:drawable/ic_lock_idle_alarm"
-            android:text="@string/section_speak_time" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btnVolumeDown"
-            android:layout_width="0dp"
-            android:layout_height="52dp"
-            android:layout_weight="1"
-            android:text="@string/volume_down" />
-
-        <Button
-            android:id="@+id/btnVolumeUp"
-            android:layout_width="0dp"
-            android:layout_height="52dp"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
-            android:text="@string/volume_up" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btnAiAssistant"
-            android:layout_width="0dp"
-            android:layout_height="52dp"
-            android:layout_weight="1"
-            android:drawableTop="@android:drawable/ic_btn_speak_now"
-            android:text="@string/section_ai" />
-
-        <Button
-            android:id="@+id/btnCaretakerConfig"
-            android:layout_width="0dp"
-            android:layout_height="52dp"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
-            android:drawableTop="@android:drawable/ic_menu_manage"
-            android:text="@string/section_config" />
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/txtRecognized"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
-        android:text="@string/recognized_default"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp" />
-
-    <TextView
-        android:id="@+id/txtPluginInfo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:gravity="center"
-        android:textColor="#BBBBBB"
-        android:textSize="13sp" />
-
-</LinearLayout>
+</ScrollView>

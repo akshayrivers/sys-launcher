@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base Button Styles -->
+    <style name="SeniorButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:minHeight">@dimen/button_min_height</item>
+        <item name="android:minWidth">@dimen/button_min_width</item>
+        <item name="android:textSize">@dimen/button_text_size</item>
+        <item name="android:padding">@dimen/button_padding</item>
+        <item name="cornerRadius">@dimen/corner_radius_button</item>
+    </style>
+    
+    <!-- Text Styles for Accessibility -->
+    <style name="HeadingText">
+        <item name="android:textSize">@dimen/text_heading_size</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_primary_dark</item>
+    </style>
+    
+    <style name="BodyText">
+        <item name="android:textSize">@dimen/text_body_size</item>
+        <item name="android:textColor">@color/text_primary_dark</item>
+    </style>
+    
+    <style name="LabelText">
+        <item name="android:textSize">@dimen/text_label_size</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_primary_dark</item>
+    </style>
+    
+    <!-- Card Style -->
+    <style name="ContactCard">
+        <item name="android:background">@color/bg_surface_dark</item>
+        <item name="android:padding">@dimen/margin_medium</item>
+    </style>
+</resources>
