@@ -40,6 +40,10 @@ class VoiceCueManager(context: Context) : TextToSpeech.OnInitListener {
         speak("Welcome to Senior Launcher. Tap photos to call family members.")
     }
     
+    fun sayCalling(name: String) {
+        speak("Calling $name now")
+    }
+
     fun sayCallingSon() {
         speak("Calling your son now")
     }
@@ -98,6 +102,22 @@ class VoiceCueManager(context: Context) : TextToSpeech.OnInitListener {
     
     fun sayLongPressToChange() {
         speak("Press and hold to change this contact")
+    }
+
+    fun sayAppClosed() {
+        speak("Closing app")
+    }
+
+    fun sayInvalidPin() {
+        speak("Incorrect code. Please try again.")
+    }
+
+    fun sayProvisioningComplete() {
+        speak("Setup complete. Welcome home.")
+    }
+
+    fun sayEnteringCaretakerMode() {
+        speak("Entering caretaker setup mode.")
     }
     
     fun destroy() {

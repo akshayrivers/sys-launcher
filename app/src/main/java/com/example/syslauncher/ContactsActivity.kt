@@ -18,12 +18,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.example.syslauncher.services.VoiceCueManager
 import java.io.File
 import java.io.FileOutputStream
 
 class ContactsActivity : AppCompatActivity() {
     private lateinit var store: ContactStore
     private lateinit var listContainer: LinearLayout
+    private lateinit var voiceCueManager: VoiceCueManager
     private var pendingCallNumber: String? = null
     private var selectedPhotoUri: String? = null
     private var pendingCameraAfterPermission = false
@@ -34,6 +36,7 @@ class ContactsActivity : AppCompatActivity() {
             if (granted && !number.isNullOrBlank()) {
                 placeCall(number)
             } else {
+                voiceCueManager.speak(getString(R.string.phone_permission_denied))
                 Toast.makeText(this, "Phone permission denied", Toast.LENGTH_SHORT).show()
             }
         }
@@ -43,6 +46,7 @@ class ContactsActivity : AppCompatActivity() {
             if (granted) {
                 launchContactPicker()
             } else {
+                voiceCueManager.speak(getString(R.string.contacts_permission_denied))
                 Toast.makeText(this, "Contacts permission denied", Toast.LENGTH_SHORT).show()
             }
         }
@@ -55,6 +59,7 @@ class ContactsActivity : AppCompatActivity() {
                 Intent.FLAG_GRANT_READ_URI_PERMISSION
             )
             selectedPhotoUri = uri.toString()
+            voiceCueManager.speak("Photo selected")
             Toast.makeText(this, "Photo selected", Toast.LENGTH_SHORT).show()
         }
 
@@ -62,6 +67,7 @@ class ContactsActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap? ->
             if (bitmap == null) return@registerForActivityResult
             selectedPhotoUri = saveBitmap(bitmap)
+            voiceCueManager.speak("Photo captured")
             Toast.makeText(this, "Photo captured", Toast.LENGTH_SHORT).show()
         }
 
@@ -84,7 +90,10 @@ class ContactsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_contacts)
 
         store = ContactStore(this)
+        voiceCueManager = VoiceCueManager(this)
         listContainer = findViewById(R.id.contactsContainer)
+
+        voiceCueManager.speak("Manage your contacts. Tap a name to call.")
 
         findViewById<Button>(R.id.btnAddContact).setOnClickListener { showEditDialog(null) }
         findViewById<Button>(R.id.btnImportContact).setOnClickListener { importFromPhoneContacts() }
@@ -116,8 +125,12 @@ class ContactsActivity : AppCompatActivity() {
                 img.setImageResource(R.drawable.ic_contact_default)
             }
 
-            row.setOnClickListener { callWithPermission(contact.phone) }
+            row.setOnClickListener { 
+                voiceCueManager.sayCalling(contact.name)
+                callWithPermission(contact.phone) 
+            }
             row.setOnLongClickListener {
+                voiceCueManager.speak("Editing ${contact.name}")
                 showEditDialog(contact)
                 true
             }
@@ -153,6 +166,7 @@ class ContactsActivity : AppCompatActivity() {
                 val phone = etPhone.text.toString().trim()
                 val role = etRole.text.toString().trim().uppercase()
                 if (name.isBlank() || phone.isBlank() || role.isBlank()) {
+                    voiceCueManager.speak("Please fill all fields.")
                     Toast.makeText(this, "Fill all fields", Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }
@@ -172,6 +186,7 @@ class ContactsActivity : AppCompatActivity() {
                     }
                 }
                 store.saveContacts(contacts)
+                voiceCueManager.speak("Contact saved.")
                 renderContacts()
             }
             .setNeutralButton(if (existing == null) "Cancel" else "Delete") { _, _ ->
@@ -179,6 +194,7 @@ class ContactsActivity : AppCompatActivity() {
                     val contacts = store.loadContacts()
                     contacts.removeAll { it.id == existing.id }
                     store.saveContacts(contacts)
+                    voiceCueManager.speak("Contact deleted.")
                     renderContacts()
                 }
             }
@@ -201,6 +217,7 @@ class ContactsActivity : AppCompatActivity() {
         try {
             startActivity(Intent(Intent.ACTION_CALL, Uri.parse("tel:$number")))
         } catch (_: Exception) {
+            voiceCueManager.speak(getString(R.string.unable_to_call))
             Toast.makeText(this, "Unable to place call", Toast.LENGTH_SHORT).show()
         }
     }
@@ -233,6 +250,7 @@ class ContactsActivity : AppCompatActivity() {
         val cursor: Cursor? = contentResolver.query(uri, projection, null, null, null)
         cursor.use { c ->
             if (c == null || !c.moveToFirst()) {
+                voiceCueManager.speak(getString(R.string.import_failed))
                 Toast.makeText(this, "Unable to import contact", Toast.LENGTH_SHORT).show()
                 return
             }
@@ -241,6 +259,7 @@ class ContactsActivity : AppCompatActivity() {
             val photo = c.getString(2)
 
             if (number.isBlank()) {
+                voiceCueManager.speak("This contact has no number.")
                 Toast.makeText(this, "Selected contact has no number", Toast.LENGTH_SHORT).show()
                 return
             }
@@ -266,6 +285,7 @@ class ContactsActivity : AppCompatActivity() {
                     )
                 )
                 store.saveContacts(contacts)
+                voiceCueManager.speak("Contact imported as $selectedRole.")
                 renderContacts()
             }
             .setNegativeButton("Cancel", null)
@@ -302,6 +322,7 @@ class ContactsActivity : AppCompatActivity() {
 
         cursor.use { c ->
             if (c == null) {
+                voiceCueManager.speak("Unable to read phone contacts.")
                 Toast.makeText(this, "Unable to read contacts", Toast.LENGTH_SHORT).show()
                 return
             }
@@ -330,6 +351,7 @@ class ContactsActivity : AppCompatActivity() {
         }
 
         store.saveContacts(contacts)
+        voiceCueManager.speak("Imported $added contacts successfully.")
         renderContacts()
         Toast.makeText(this, "Imported $added contacts", Toast.LENGTH_SHORT).show()
     }
@@ -352,5 +374,12 @@ class ContactsActivity : AppCompatActivity() {
             output.flush()
         }
         return Uri.fromFile(file).toString()
+    }
+
+    override fun onDestroy() {
+        if (::voiceCueManager.isInitialized) {
+            voiceCueManager.destroy()
+        }
+        super.onDestroy()
     }
 }

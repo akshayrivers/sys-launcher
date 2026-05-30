@@ -8,12 +8,18 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.syslauncher.services.VoiceCueManager
 
 class ProvisioningActivity : AppCompatActivity() {
+
+    private lateinit var voiceCueManager: VoiceCueManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_provisioning)
+
+        voiceCueManager = VoiceCueManager(this)
+        voiceCueManager.speak("Welcome. Please set up the launcher for your loved one.")
 
         val etCaretaker = findViewById<EditText>(R.id.etCaretakerEmail)
         val etHelpers = findViewById<EditText>(R.id.etHelpers)
@@ -55,10 +61,12 @@ class ProvisioningActivity : AppCompatActivity() {
             val pluginId = spinnerPlugin.selectedItem.toString().substringBefore(" ")
 
             if (caretaker.isBlank() || son.isBlank() || daughter.isBlank() || home.isBlank() || help.isBlank()) {
+                voiceCueManager.speak("Please fill in all required phone numbers.")
                 Toast.makeText(this, "Fill all required fields", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             if (pin.length < 4) {
+                voiceCueManager.speak("The PIN must be at least four digits.")
                 Toast.makeText(this, "Caretaker PIN must be at least 4 digits", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -76,8 +84,14 @@ class ProvisioningActivity : AppCompatActivity() {
             )
             ContactStore(this).seedDefaultsIfEmpty(son, daughter, home, help)
 
+            voiceCueManager.sayProvisioningComplete()
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
+    }
+
+    override fun onDestroy() {
+        voiceCueManager.destroy()
+        super.onDestroy()
     }
 }

@@ -11,7 +11,6 @@ import android.media.AudioManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.SystemClock
-import android.speech.tts.TextToSpeech
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
@@ -31,6 +30,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import android.provider.MediaStore
+import com.example.syslauncher.services.VoiceCueManager
 import com.example.syslauncher.utils.AccessibilityHelper
 import com.example.syslauncher.utils.LoggingHelper
 import com.example.syslauncher.utils.PermissionHelper
@@ -38,12 +38,13 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var prefs: AppPrefs
     private lateinit var contactStore: ContactStore
     private lateinit var permissionHelper: PermissionHelper
     private lateinit var accessibilityHelper: AccessibilityHelper
+    private lateinit var voiceCueManager: VoiceCueManager
 
     private var pendingNumber: String? = null
 
@@ -58,15 +59,20 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private lateinit var lblCall3: TextView
     private lateinit var lblCall4: TextView
     private var speechRecognizer: SpeechRecognizer? = null
-    private var textToSpeech: TextToSpeech? = null
     private var flashOn = false
 
     private val remoteAssistLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             val action = result.data?.getStringExtra("assist_action").orEmpty()
             when (action) {
-                "CALL_SON" -> callWithPermission(numberForRole("SON", prefs.sonNumber()))
-                "CALL_HELP" -> callWithPermission(numberForRole("HELP", prefs.helpNumber()))
+                "CALL_SON" -> {
+                    voiceCueManager.sayCallingSon()
+                    callWithPermission(numberForRole("SON", prefs.sonNumber()))
+                }
+                "CALL_HELP" -> {
+                    voiceCueManager.sayHelpRequested()
+                    callWithPermission(numberForRole("HELP", prefs.helpNumber()))
+                }
                 "RESET_UI" -> recreate()
             }
         }
@@ -87,6 +93,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             if (spoken.isNotBlank() && confidence >= 0.55f) {
                 triggerIntentFromKeywords(spoken.lowercase(Locale.getDefault()), confidence)
             } else if (spoken.isNotBlank()) {
+                voiceCueManager.speak(getString(R.string.low_confidence_voice))
                 Toast.makeText(this, "Low confidence. Use buttons.", Toast.LENGTH_SHORT).show()
             } else {
                 startFallbackSpeechRecognizer()
@@ -108,6 +115,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
 
             if (!hasAudio) {
+                voiceCueManager.speak(getString(R.string.microphone_permission_denied))
                 Toast.makeText(this, "Microphone permission denied", Toast.LENGTH_SHORT).show()
             }
         }
@@ -118,6 +126,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         contactStore = ContactStore(this)
         permissionHelper = PermissionHelper(this)
         accessibilityHelper = AccessibilityHelper(this)
+        voiceCueManager = VoiceCueManager(this)
         
         LoggingHelper.info("MainActivity created")
         
@@ -134,7 +143,8 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         setupBackBehavior()
         setupButtons()
         refreshQuickButtons()
-        textToSpeech = TextToSpeech(this, this)
+        
+        voiceCueManager.sayWelcome()
     }
 
     override fun onResume() {
@@ -146,9 +156,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     override fun onDestroy() {
         speechRecognizer?.destroy()
         speechRecognizer = null
-        textToSpeech?.stop()
-        textToSpeech?.shutdown()
-        textToSpeech = null
+        voiceCueManager.destroy()
         setTorch(false)
         super.onDestroy()
     }
@@ -204,10 +212,21 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         pluginInfoText.text = "Lang: ${prefs.language()} | Plugin: ${prefs.plugin()}"
 
         // Setup accessibility
-        accessibilityHelper.setupAccessibleImageButton(btnCall1, "Son")
-        accessibilityHelper.setupAccessibleImageButton(btnCall2, "Daughter")
-        accessibilityHelper.setupAccessibleImageButton(btnCall3, "Home")
-        accessibilityHelper.setupAccessibleImageButton(btnCall4, "Help")
+        accessibilityHelper.setupAccessibleImageButton(btnCall1, getString(R.string.contact_1))
+        accessibilityHelper.setupAccessibleImageButton(btnCall2, getString(R.string.contact_2))
+        accessibilityHelper.setupAccessibleImageButton(btnCall3, getString(R.string.contact_3))
+        accessibilityHelper.setupAccessibleImageButton(btnCall4, getString(R.string.contact_4))
+        accessibilityHelper.setupAccessibleButton(btnVoice, getString(R.string.voice_button))
+        accessibilityHelper.setupAccessibleButton(btnContacts, getString(R.string.section_contacts))
+        accessibilityHelper.setupAccessibleButton(btnGallery, getString(R.string.section_gallery))
+        accessibilityHelper.setupAccessibleButton(btnYoutube, getString(R.string.section_youtube))
+        accessibilityHelper.setupAccessibleButton(btnWhatsapp, getString(R.string.section_whatsapp))
+        accessibilityHelper.setupAccessibleButton(btnFlashlight, getString(R.string.section_flashlight))
+        accessibilityHelper.setupAccessibleButton(btnSpeakTime, getString(R.string.section_speak_time))
+        accessibilityHelper.setupAccessibleButton(btnVolumeDown, getString(R.string.volume_down))
+        accessibilityHelper.setupAccessibleButton(btnVolumeUp, getString(R.string.volume_up))
+        accessibilityHelper.setupAccessibleButton(btnAi, getString(R.string.section_ai))
+        accessibilityHelper.setupAccessibleButton(btnConfig, getString(R.string.section_config))
 
         btnCall1.setOnClickListener { callSlot(1, "SON", prefs.sonNumber()) }
         btnCall2.setOnClickListener { callSlot(2, "DAUGHTER", prefs.daughterNumber()) }
@@ -218,15 +237,30 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         btnCall3.setOnLongClickListener { showSlotAssignmentDialog(3); true }
         btnCall4.setOnLongClickListener { showSlotAssignmentDialog(4); true }
         btnVoice.setOnClickListener { launchVoiceInput() }
-        btnContacts.setOnClickListener { startActivity(Intent(this, ContactsActivity::class.java)) }
-        btnGallery.setOnClickListener { openGallery() }
-        btnYoutube.setOnClickListener { openYoutube() }
-        btnWhatsapp.setOnClickListener { openWhatsApp() }
+        btnContacts.setOnClickListener { 
+            voiceCueManager.speak(getString(R.string.section_contacts))
+            startActivity(Intent(this, ContactsActivity::class.java)) 
+        }
+        btnGallery.setOnClickListener { 
+            voiceCueManager.sayOpeningGallery()
+            openGallery() 
+        }
+        btnYoutube.setOnClickListener { 
+            voiceCueManager.sayOpeningYouTube()
+            openYoutube() 
+        }
+        btnWhatsapp.setOnClickListener { 
+            voiceCueManager.sayOpeningWhatsApp()
+            openWhatsApp() 
+        }
         btnFlashlight.setOnClickListener { toggleFlashlight(btnFlashlight) }
         btnSpeakTime.setOnClickListener { speakTimeNow() }
         btnVolumeDown.setOnClickListener { changeVolume(false) }
         btnVolumeUp.setOnClickListener { changeVolume(true) }
-        btnAi.setOnClickListener { startActivity(Intent(this, LocalAiActivity::class.java)) }
+        btnAi.setOnClickListener { 
+            voiceCueManager.speak(getString(R.string.section_ai))
+            startActivity(Intent(this, LocalAiActivity::class.java)) 
+        }
         btnConfig.setOnClickListener { openCaretakerConfig() }
     }
 
@@ -240,6 +274,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             return
         }
 
+        voiceCueManager.sayListeningForVoiceCommand()
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
@@ -259,6 +294,8 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             spoken.contains("daughter") -> VoiceIntent("CALL", "DAUGHTER", confidence)
             spoken.contains("home") -> VoiceIntent("CALL", "HOME", confidence)
             spoken.contains("help") -> VoiceIntent("CALL", "HELP", confidence)
+            spoken.contains("time") -> VoiceIntent("ACTION", "TIME", confidence)
+            spoken.contains("light") || spoken.contains("torch") -> VoiceIntent("ACTION", "TORCH", confidence)
             else -> null
         } ?: return
 
@@ -274,11 +311,14 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             intent.action == "CALL" && intent.target == "DAUGHTER" -> callSlot(2, "DAUGHTER", prefs.daughterNumber())
             intent.action == "CALL" && intent.target == "HOME" -> callSlot(3, "HOME", prefs.homeNumber())
             intent.action == "CALL" && intent.target == "HELP" -> onHelpPressed()
+            intent.action == "ACTION" && intent.target == "TIME" -> speakTimeNow()
+            intent.action == "ACTION" && intent.target == "TORCH" -> toggleFlashlight(findViewById(R.id.btnFlashlight))
         }
     }
 
     private fun callWithPermission(number: String) {
         if (number.isBlank()) {
+            voiceCueManager.speak(getString(R.string.no_number_configured))
             Toast.makeText(this, "No number configured", Toast.LENGTH_SHORT).show()
             return
         }
@@ -291,7 +331,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (
             ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CALL_PHONE)
         ) {
-            Toast.makeText(this, "Allow phone permission to place calls", Toast.LENGTH_SHORT).show()
+            voiceCueManager.speak(getString(R.string.phone_permission_denied))
         }
 
         permissionLauncher.launch(
@@ -309,13 +349,14 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             startActivity(intent)
             LoggingHelper.info("Call initiated to $number")
         } catch (_: SecurityException) {
-            Toast.makeText(this, "Phone permission denied", Toast.LENGTH_SHORT).show()
+            voiceCueManager.speak(getString(R.string.phone_permission_denied))
         } catch (_: Exception) {
-            Toast.makeText(this, "Unable to start call", Toast.LENGTH_SHORT).show()
+            voiceCueManager.speak(getString(R.string.unable_to_call))
         }
     }
 
     private fun onHelpPressed() {
+        voiceCueManager.sayHelpRequested()
         notifyHelper()
 
         AlertDialog.Builder(this)
@@ -361,6 +402,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     }
                     remoteAssistLauncher.launch(assistIntent)
                 } else {
+                    voiceCueManager.sayInvalidPin()
                     Toast.makeText(this, "Invalid PIN", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -420,6 +462,8 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun callSlot(slot: Int, fallbackRole: String, fallbackNumber: String) {
         val contact = contactForSlot(slot, fallbackRole)
+        val name = contact?.name ?: fallbackRole
+        voiceCueManager.sayCalling(name)
         val number = contact?.phone ?: numberForRole(fallbackRole, fallbackNumber)
         callWithPermission(number)
     }
@@ -548,6 +592,8 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (!setTorch(flashOn)) {
             flashOn = false
             Toast.makeText(this, "Torch unavailable", Toast.LENGTH_SHORT).show()
+        } else {
+            if (flashOn) voiceCueManager.sayFlashlightOn() else voiceCueManager.sayFlashlightOff()
         }
         button.text = if (flashOn) "Torch ON" else getString(R.string.section_flashlight)
     }
@@ -572,19 +618,14 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
         val direction = if (isIncrease) AudioManager.ADJUST_RAISE else AudioManager.ADJUST_LOWER
         audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, direction, AudioManager.FLAG_SHOW_UI)
+        if (isIncrease) voiceCueManager.sayVolumeIncreased() else voiceCueManager.sayVolumeDecreased()
     }
 
     private fun speakTimeNow() {
         val now = Date()
-        val speech = SimpleDateFormat("hh:mm a", Locale.getDefault()).format(now)
-        recognizedText.text = "Time: $speech"
-        textToSpeech?.speak("The time is $speech", TextToSpeech.QUEUE_FLUSH, null, "speak_time")
-    }
-
-    override fun onInit(status: Int) {
-        if (status == TextToSpeech.SUCCESS) {
-            textToSpeech?.language = Locale.getDefault()
-        }
+        val timeString = SimpleDateFormat("hh:mm a", Locale.getDefault()).format(now)
+        recognizedText.text = "Time: $timeString"
+        voiceCueManager.sayTimeIs(timeString)
     }
 
     private fun openCaretakerConfig() {
@@ -594,8 +635,10 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             .setView(input)
             .setPositiveButton("Open") { _, _ ->
                 if (input.text.toString().trim() == prefs.caretakerPin()) {
+                    voiceCueManager.sayEnteringCaretakerMode()
                     startActivity(Intent(this, CaretakerConfigActivity::class.java))
                 } else {
+                    voiceCueManager.sayInvalidPin()
                     Toast.makeText(this, "Invalid PIN", Toast.LENGTH_SHORT).show()
                 }
             }
