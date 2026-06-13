@@ -20,7 +20,7 @@ class CaretakerConfigActivity : AppCompatActivity() {
         val prefs = AppPrefs(this)
         val etCaretaker = findViewById<EditText>(R.id.etCfgCaretakerEmail)
         val etHelpers = findViewById<EditText>(R.id.etCfgHelpers)
-        val etSon = findViewById<EditText>(R.id.etSonNumber)
+        val etSon = findViewById<EditText>(R.id.etCfgSonNumber)
         val etDaughter = findViewById<EditText>(R.id.etCfgDaughterNumber)
         val etHome = findViewById<EditText>(R.id.etCfgHomeNumber)
         val etHelp = findViewById<EditText>(R.id.etCfgHelpNumber)

@@ -12,29 +12,52 @@
         android:orientation="vertical"
         android:padding="@dimen/margin_medium">
 
-        <!-- HEADER: App Title -->
+        <!-- HEADER: Clock & Date Widget -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center"
-            android:paddingBottom="@dimen/margin_large">
+            android:padding="16dp"
+            android:background="@drawable/clock_card_bg"
+            android:layout_marginBottom="16dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="👋 Senior Launcher"
-                android:textSize="@dimen/text_heading_size"
+                android:text="👵 Senior Launcher 👴"
+                android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="@color/text_primary_dark" />
+                android:textColor="#FF9800"
+                android:layout_marginBottom="8dp" />
+
+            <TextClock
+                android:id="@+id/textClockTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:format12Hour="hh:mm a"
+                android:format24Hour="HH:mm"
+                android:textSize="44sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF" />
+
+            <TextClock
+                android:id="@+id/textClockDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:format12Hour="EEEE, d MMMM yyyy"
+                android:format24Hour="EEEE, d MMMM yyyy"
+                android:textSize="18sp"
+                android:textColor="#BBBBBB"
+                android:layout_marginTop="4dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/quick_contacts_hint"
-                android:textSize="@dimen/text_small_size"
-                android:textColor="@color/text_secondary_dark"
-                android:layout_marginTop="@dimen/margin_tiny" />
+                android:textSize="13sp"
+                android:textColor="#888888"
+                android:layout_marginTop="8dp" />
         </LinearLayout>
 
         <!-- SECTION 1: QUICK FAMILY CONTACTS (2x2 Grid) -->

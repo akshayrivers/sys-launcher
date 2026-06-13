@@ -34,6 +34,10 @@ import com.example.syslauncher.services.VoiceCueManager
 import com.example.syslauncher.utils.AccessibilityHelper
 import com.example.syslauncher.utils.LoggingHelper
 import com.example.syslauncher.utils.PermissionHelper
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -45,6 +49,29 @@ class MainActivity : AppCompatActivity() {
     private lateinit var permissionHelper: PermissionHelper
     private lateinit var accessibilityHelper: AccessibilityHelper
     private lateinit var voiceCueManager: VoiceCueManager
+
+    private var isAuthForConfig = true
+
+    private val googleSignInLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                try {
+                    val account = task.getResult(ApiException::class.java)
+                    val email = account?.email.orEmpty().trim()
+                    if (email.isNotBlank()) {
+                        verifyCaretakerEmailAndProceed(email)
+                    } else {
+                        Toast.makeText(this, "Google account email not found", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: ApiException) {
+                    LoggingHelper.error("Google sign in failed code=${e.statusCode}", e)
+                    Toast.makeText(this, "Google Sign-In failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, "Google Sign-In cancelled", Toast.LENGTH_SHORT).show()
+            }
+        }
 
     private var pendingNumber: String? = null
 
@@ -363,7 +390,7 @@ class MainActivity : AppCompatActivity() {
             .setTitle("Remote help request")
             .setMessage("Allow caretaker assist session for 10 minutes?")
             .setPositiveButton("Allow") { _: DialogInterface, _: Int ->
-                verifyCaretakerAndStartSession()
+                showCaretakerAuthDialog(false)
             }
             .setNegativeButton("Cancel", null)
             .show()
@@ -387,27 +414,76 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun verifyCaretakerAndStartSession() {
-        val input = EditText(this).apply {
-            hint = "Enter caretaker PIN"
+    private fun showCaretakerAuthDialog(forConfig: Boolean) {
+        isAuthForConfig = forConfig
+        
+        val dialogView = layoutInflater.inflate(R.layout.dialog_caretaker_auth, null)
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .create()
+
+        val btnGoogle = dialogView.findViewById<Button>(R.id.btnAuthGoogle)
+        val etPin = dialogView.findViewById<EditText>(R.id.etAuthPin)
+        val btnVerifyPin = dialogView.findViewById<Button>(R.id.btnAuthVerifyPin)
+
+        btnGoogle.setOnClickListener {
+            dialog.dismiss()
+            startGoogleSignInFlow()
         }
 
-        AlertDialog.Builder(this)
-            .setTitle("Caretaker verification")
-            .setView(input)
-            .setPositiveButton("Start session") { _, _ ->
-                if (input.text.toString().trim() == prefs.caretakerPin()) {
+        btnVerifyPin.setOnClickListener {
+            val pin = etPin.text.toString().trim()
+            if (pin == prefs.caretakerPin()) {
+                dialog.dismiss()
+                if (forConfig) {
+                    voiceCueManager.sayEnteringCaretakerMode()
+                    startActivity(Intent(this, CaretakerConfigActivity::class.java))
+                } else {
                     val assistIntent = Intent(this, RemoteAssistActivity::class.java).apply {
                         putExtra("session_started_at", SystemClock.elapsedRealtime())
                     }
                     remoteAssistLauncher.launch(assistIntent)
-                } else {
-                    voiceCueManager.sayInvalidPin()
-                    Toast.makeText(this, "Invalid PIN", Toast.LENGTH_SHORT).show()
                 }
+            } else {
+                voiceCueManager.sayInvalidPin()
+                Toast.makeText(this, "Invalid PIN", Toast.LENGTH_SHORT).show()
             }
-            .setNegativeButton("Cancel", null)
-            .show()
+        }
+
+        dialog.show()
+    }
+
+    private fun startGoogleSignInFlow() {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .build()
+        val googleSignInClient = GoogleSignIn.getClient(this, gso)
+        googleSignInClient.signOut().addOnCompleteListener {
+            val signInIntent = googleSignInClient.signInIntent
+            googleSignInLauncher.launch(signInIntent)
+        }
+    }
+
+    private fun verifyCaretakerEmailAndProceed(email: String) {
+        val caretakerEmail = prefs.caretakerEmail().trim().lowercase(Locale.getDefault())
+        val helperEmails = prefs.helperAccounts().map { it.trim().lowercase(Locale.getDefault()) }
+        val inputEmail = email.lowercase(Locale.getDefault())
+
+        if (inputEmail == caretakerEmail || helperEmails.contains(inputEmail)) {
+            if (isAuthForConfig) {
+                voiceCueManager.sayEnteringCaretakerMode()
+                startActivity(Intent(this, CaretakerConfigActivity::class.java))
+            } else {
+                val assistIntent = Intent(this, RemoteAssistActivity::class.java).apply {
+                    putExtra("session_started_at", SystemClock.elapsedRealtime())
+                }
+                remoteAssistLauncher.launch(assistIntent)
+            }
+        } else {
+            val errMsg = "Access Denied: $email is not registered"
+            Toast.makeText(this, errMsg, Toast.LENGTH_LONG).show()
+            voiceCueManager.speak("Access denied. This Google account is not registered.")
+        }
     }
 
     data class VoiceIntent(
@@ -629,20 +705,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openCaretakerConfig() {
-        val input = EditText(this).apply { hint = "Enter caretaker PIN" }
-        AlertDialog.Builder(this)
-            .setTitle("Caretaker access")
-            .setView(input)
-            .setPositiveButton("Open") { _, _ ->
-                if (input.text.toString().trim() == prefs.caretakerPin()) {
-                    voiceCueManager.sayEnteringCaretakerMode()
-                    startActivity(Intent(this, CaretakerConfigActivity::class.java))
-                } else {
-                    voiceCueManager.sayInvalidPin()
-                    Toast.makeText(this, "Invalid PIN", Toast.LENGTH_SHORT).show()
-                }
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
+        showCaretakerAuthDialog(true)
     }
 }

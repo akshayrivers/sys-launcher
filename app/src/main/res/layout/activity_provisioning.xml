@@ -25,6 +25,15 @@
             android:hint="@string/caretaker_email"
             android:inputType="textEmailAddress" />
 
+        <Button
+            android:id="@+id/btnLinkCaretakerGoogle"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:text="Link Caretaker Google Account"
+            android:textColor="#000000"
+            android:backgroundTint="#FFFFFF" />
+
         <EditText
             android:id="@+id/etHelpers"
             android:layout_width="match_parent"

@@ -7,12 +7,37 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.example.syslauncher.services.VoiceCueManager
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 
 class ProvisioningActivity : AppCompatActivity() {
 
     private lateinit var voiceCueManager: VoiceCueManager
+
+    private val googleSignInLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                try {
+                    val account = task.getResult(ApiException::class.java)
+                    val email = account?.email.orEmpty()
+                    if (email.isNotBlank()) {
+                        findViewById<EditText>(R.id.etCaretakerEmail).setText(email)
+                        Toast.makeText(this, "Linked caretaker account: $email", Toast.LENGTH_LONG).show()
+                        voiceCueManager.speak("Google account linked successfully.")
+                    }
+                } catch (e: ApiException) {
+                    Toast.makeText(this, "Google Sign-In failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, "Google Sign-In cancelled", Toast.LENGTH_SHORT).show()
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +55,7 @@ class ProvisioningActivity : AppCompatActivity() {
         val etPin = findViewById<EditText>(R.id.etCaretakerPin)
         val spinnerLanguage = findViewById<Spinner>(R.id.spinnerLanguage)
         val spinnerPlugin = findViewById<Spinner>(R.id.spinnerPlugin)
+        val btnLinkGoogle = findViewById<Button>(R.id.btnLinkCaretakerGoogle)
         val btnComplete = findViewById<Button>(R.id.btnCompleteSetup)
 
         val languageOptions = listOf("Hindi", "Dogri", "English")
@@ -48,6 +74,17 @@ class ProvisioningActivity : AppCompatActivity() {
             android.R.layout.simple_spinner_dropdown_item,
             pluginOptions
         )
+
+        btnLinkGoogle.setOnClickListener {
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build()
+            val googleSignInClient = GoogleSignIn.getClient(this, gso)
+            googleSignInClient.signOut().addOnCompleteListener {
+                val signInIntent = googleSignInClient.signInIntent
+                googleSignInLauncher.launch(signInIntent)
+            }
+        }
 
         btnComplete.setOnClickListener {
             val caretaker = etCaretaker.text.toString().trim()
